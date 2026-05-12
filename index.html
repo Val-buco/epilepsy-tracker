@@ -1,8 +1,276 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epilepsy Tracker</title>
+
+  <style>
+
+    body{
+      font-family: Arial, sans-serif;
+      background:#f4f6f9;
+      margin:0;
+      padding:20px;
+    }
+
+    .container{
+      max-width:900px;
+      margin:auto;
+    }
+
+    h1{
+      text-align:center;
+      color:#4a4aef;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      margin-top:20px;
+      border-radius:12px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    input, textarea, select, button{
+
+      width:100%;
+      margin-top:10px;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      box-sizing:border-box;
+      font-size:16px;
+
+    }
+
+    button{
+
+      background:#4a4aef;
+      color:white;
+      border:none;
+      cursor:pointer;
+      font-weight:bold;
+
+    }
+
+    button:hover{
+      background:#3737d1;
+    }
+
+    ul{
+      list-style:none;
+      padding:0;
+    }
+
+    li{
+      background:#eef1ff;
+      padding:10px;
+      margin-top:10px;
+      border-radius:8px;
+    }
+
+  </style>
+
+</head>
+
 <body>
 
-<h1>FUNCIONA</h1>
+<div class="container">
+
+  <h1>🧠 Epilepsy Tracker</h1>
+
+  <div class="card">
+
+    <h2>Registrar Crisis</h2>
+
+    <input type="datetime-local" id="crisisDate">
+
+    <select id="crisisType">
+
+      <option value="">Tipo de crisis</option>
+      <option>Tónico-clónica</option>
+      <option>Ausencia</option>
+      <option>Focal</option>
+      <option>Mioclónica</option>
+
+    </select>
+
+    <textarea id="crisisNotes" placeholder="Descripción"></textarea>
+
+    <button onclick="saveCrisis()">
+      Guardar Crisis
+    </button>
+
+    <ul id="crisisList"></ul>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Registrar Medicamento</h2>
+
+    <input type="text" id="medName" placeholder="Medicamento">
+
+    <input type="text" id="medDose" placeholder="Dosis">
+
+    <button onclick="saveMedication()">
+      Guardar Medicamento
+    </button>
+
+    <ul id="medList"></ul>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Registrar Síntomas</h2>
+
+    <textarea id="symptomText" placeholder="Describe síntomas"></textarea>
+
+    <button onclick="saveSymptom()">
+      Guardar Síntoma
+    </button>
+
+    <ul id="symptomList"></ul>
+
+  </div>
+
+</div>
+
+<script>
+
+let crises = JSON.parse(localStorage.getItem("crises")) || [];
+let meds = JSON.parse(localStorage.getItem("meds")) || [];
+let symptoms = JSON.parse(localStorage.getItem("symptoms")) || [];
+
+function saveCrisis(){
+
+  const date = document.getElementById("crisisDate").value;
+  const type = document.getElementById("crisisType").value;
+  const notes = document.getElementById("crisisNotes").value;
+
+  if(!date || !type){
+
+    alert("Completa los campos");
+    return;
+
+  }
+
+  crises.push({date, type, notes});
+
+  localStorage.setItem("crises", JSON.stringify(crises));
+
+  renderCrises();
+
+}
+
+function renderCrises(){
+
+  const list = document.getElementById("crisisList");
+
+  list.innerHTML = "";
+
+  crises.forEach(c => {
+
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <strong>${c.type}</strong><br>
+      ${c.date}<br>
+      ${c.notes}
+    `;
+
+    list.appendChild(li);
+
+  });
+
+}
+
+function saveMedication(){
+
+  const name = document.getElementById("medName").value;
+  const dose = document.getElementById("medDose").value;
+
+  if(!name || !dose){
+
+    alert("Completa los campos");
+    return;
+
+  }
+
+  meds.push({name, dose});
+
+  localStorage.setItem("meds", JSON.stringify(meds));
+
+  renderMeds();
+
+}
+
+function renderMeds(){
+
+  const list = document.getElementById("medList");
+
+  list.innerHTML = "";
+
+  meds.forEach(m => {
+
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <strong>${m.name}</strong><br>
+      ${m.dose}
+    `;
+
+    list.appendChild(li);
+
+  });
+
+}
+
+function saveSymptom(){
+
+  const text = document.getElementById("symptomText").value;
+
+  if(!text){
+
+    alert("Escribe un síntoma");
+    return;
+
+  }
+
+  symptoms.push(text);
+
+  localStorage.setItem("symptoms", JSON.stringify(symptoms));
+
+  renderSymptoms();
+
+}
+
+function renderSymptoms(){
+
+  const list = document.getElementById("symptomList");
+
+  list.innerHTML = "";
+
+  symptoms.forEach(s => {
+
+    const li = document.createElement("li");
+
+    li.innerHTML = s;
+
+    list.appendChild(li);
+
+  });
+
+}
+
+renderCrises();
+renderMeds();
+renderSymptoms();
+
+</script>
 
 </body>
 </html>
